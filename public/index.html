@@ -58,6 +58,38 @@
       margin-top: 15px;
       font-weight: bold;
     }
+
+    .history {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .history h3 {
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .history ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .history li {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .history .tx-deposit {
+      color: #16a34a;
+    }
+
+    .history .tx-withdraw {
+      color: #dc2626;
+    }
   </style>
 </head>
 <body>
@@ -73,6 +105,11 @@
     <button class="withdraw" onclick="withdraw()">Withdraw</button>
 
     <p id="message"></p>
+
+    <div class="history">
+      <h3>Recent Transactions</h3>
+      <ul id="transactions"></ul>
+    </div>
   </div>
 
   <script>
@@ -80,6 +117,23 @@
       const res = await fetch("/api/balance");
       const data = await res.json();
       document.getElementById("balance").innerText = data.balance;
+    }
+
+    async function loadTransactions() {
+      const res = await fetch("/api/transactions");
+      const data = await res.json();
+
+      const list = document.getElementById("transactions");
+      list.innerHTML = "";
+
+      data.transactions.forEach((tx) => {
+        const li = document.createElement("li");
+        const sign = tx.type === "deposit" ? "+" : "-";
+        const time = new Date(tx.timestamp).toLocaleTimeString();
+
+        li.innerHTML = `<span class="tx-${tx.type}">${sign}$${tx.amount}</span> — ${tx.type} at ${time} (balance: $${tx.balance})`;
+        list.appendChild(li);
+      });
     }
 
     async function deposit() {
@@ -98,6 +152,7 @@
 
       if (data.balance !== undefined) {
         document.getElementById("balance").innerText = data.balance;
+        loadTransactions();
       }
     }
 
@@ -117,10 +172,12 @@
 
       if (data.balance !== undefined) {
         document.getElementById("balance").innerText = data.balance;
+        loadTransactions();
       }
     }
 
     loadBalance();
+    loadTransactions();
   </script>
 </body>
 </html>
