@@ -1,136 +1,126 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ABDA Simple Banking App</title>
-
+  <title>Simple Banking App</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f4f6f8;
-      margin: 0;
-      padding: 0;
+      text-align: center;
+      margin-top: 80px;
     }
 
-    .container {
-      width: 420px;
-      margin: 80px auto;
+    .card {
       background: white;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.1);
-      text-align: center;
+      width: 350px;
+      margin: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     h1 {
       color: #1f2937;
     }
 
-    .subtitle {
-      color: #6b7280;
-      margin-bottom: 20px;
-    }
-
     .balance {
       font-size: 32px;
-      margin: 20px 0;
-      color: #047857;
       font-weight: bold;
+      color: green;
+      margin: 20px 0;
     }
 
     input {
+      padding: 10px;
       width: 90%;
-      padding: 12px;
       margin: 10px 0;
-      font-size: 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
     }
 
     button {
-      width: 44%;
-      padding: 12px;
+      padding: 10px 20px;
       margin: 8px;
-      font-size: 16px;
-      cursor: pointer;
       border: none;
-      border-radius: 6px;
-      color: white;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
     .deposit {
-      background: #2563eb;
+      background: #16a34a;
+      color: white;
     }
 
     .withdraw {
       background: #dc2626;
+      color: white;
     }
 
-    .message {
-      margin-top: 20px;
+    #message {
+      margin-top: 15px;
       font-weight: bold;
-      color: #374151;
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>ABDA Banking App</h1>
-    <p class="subtitle">Simple Deposit and Withdrawal Demo</p>
+  <div class="card">
+    <h1>Simple Banking App</h1>
+    <div class="balance">$<span id="balance">500</span></div>
 
-    <p>Current Balance</p>
-    <div class="balance" id="balance">$0</div>
+    <input type="number" id="amount" placeholder="Enter amount" />
 
-    <input type="number" id="amount" placeholder="Enter amount">
-
-    <br>
+    <br />
 
     <button class="deposit" onclick="deposit()">Deposit</button>
     <button class="withdraw" onclick="withdraw()">Withdraw</button>
 
-    <div class="message" id="message"></div>
+    <p id="message"></p>
   </div>
 
   <script>
-    async function getBalance() {
-      const response = await fetch("/api/balance");
-      const data = await response.json();
-      document.getElementById("balance").innerText = "$" + data.balance;
+    async function loadBalance() {
+      const res = await fetch("/api/balance");
+      const data = await res.json();
+      document.getElementById("balance").innerText = data.balance;
     }
 
     async function deposit() {
       const amount = document.getElementById("amount").value;
 
-      const response = await fetch("/api/deposit", {
+      const res = await fetch("/api/deposit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ amount: amount })
+        body: JSON.stringify({ amount })
       });
 
-      const data = await response.json();
+      const data = await res.json();
       document.getElementById("message").innerText = data.message;
-      getBalance();
+
+      if (data.balance !== undefined) {
+        document.getElementById("balance").innerText = data.balance;
+      }
     }
 
     async function withdraw() {
       const amount = document.getElementById("amount").value;
 
-      const response = await fetch("/api/withdraw", {
+      const res = await fetch("/api/withdraw", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ amount: amount })
+        body: JSON.stringify({ amount })
       });
 
-      const data = await response.json();
+      const data = await res.json();
       document.getElementById("message").innerText = data.message;
-      getBalance();
+
+      if (data.balance !== undefined) {
+        document.getElementById("balance").innerText = data.balance;
+      }
     }
 
-    getBalance();
+    loadBalance();
   </script>
 </body>
 </html>
