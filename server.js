@@ -5,6 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 let balance = 500;
+let transactions = [];
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -20,6 +21,10 @@ app.get("/api/balance", (req, res) => {
   res.json({ balance });
 });
 
+app.get("/api/transactions", (req, res) => {
+  res.json({ transactions });
+});
+
 app.post("/api/deposit", (req, res) => {
   const amount = Number(req.body.amount);
 
@@ -28,6 +33,13 @@ app.post("/api/deposit", (req, res) => {
   }
 
   balance += amount;
+
+  transactions.unshift({
+    type: "deposit",
+    amount,
+    balance,
+    timestamp: new Date().toISOString()
+  });
 
   res.json({
     message: `Deposited $${amount}`,
@@ -47,6 +59,13 @@ app.post("/api/withdraw", (req, res) => {
   }
 
   balance -= amount;
+
+  transactions.unshift({
+    type: "withdraw",
+    amount,
+    balance,
+    timestamp: new Date().toISOString()
+  });
 
   res.json({
     message: `Withdrew $${amount}`,
