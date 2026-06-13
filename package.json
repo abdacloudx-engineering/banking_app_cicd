@@ -1,12 +1,12 @@
 {
-  "name": "simple-banking-app",
+  "name": "banking-app-cicd",
   "version": "1.0.0",
-  "description": "Simple banking deposit and withdrawal web application",
+  "description": "Simple banking app deployed to Linode with GitHub Actions",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.3"
+    "express": "^4.19.2"
   }
 }
